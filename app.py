@@ -19,20 +19,19 @@ with col2:
         """
         )
     
-    if st.button("🎤 Start Voice Input"):
-        recognizer = sr.Recognizer()
-        
-        with st.spinner("🎤 Listening... Please speak clearly"):
-            with sr.Microphone() as source:
-                try:
-                    audio = recognizer.listen(source, timeout=5)
-                    spoken_text = recognizer.recognize_google(audio)
-                    st.success(f"You said: {spoken_text}")
-                except sr.WaitTimeoutError:
-                    st.warning("Listening timed out. Please try again.")
-                except sr.UnknownValueError:
-                    st.warning("Sorry, couldn't understand. Please try again.") 
-                except Exception as e:
-                    st.error(f"Error: {e}")
+    audio_file = st.audio_input("Say your calculation out loud")
 
-   
+    if audio_file is not None:
+        recognizer = sr.Recognizer()
+
+        with sr.AudioFile(audio_file) as source:
+            audio = recognizer.record(source)
+
+            try:
+                spoken_text = recognizer.recognize_google(audio)
+                st.success(f"You said: {spoken_text}")
+            except sr.UnknownValueError:
+                st.warning("Sorry, couldn't understand. Please try again.") 
+            except Exception as e:
+                st.error(f"Error: {e}")
+     
